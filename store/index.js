@@ -5,7 +5,8 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    tasks: []
+    tasks: [],
+    searchQuery: ''
   },
   mutations: {
     addTask(state, task) {
@@ -25,11 +26,14 @@ export default new Vuex.Store({
       if (task) {
         task.completed = !task.completed;
       }
+    },
+    setSearchQuery(state, query) {
+      state.searchQuery = query;
     }
   },
   actions: {
     addTask({ commit }, task) {
-      commit('addTask', { ...task, id: Date.now(), completed: false });
+      commit('addTask', { ...task, id: Date.now(), createdAt: new Date(), completed: false });
     },
     deleteTask({ commit }, taskId) {
       commit('deleteTask', taskId);
@@ -39,11 +43,24 @@ export default new Vuex.Store({
     },
     toggleTaskCompletion({ commit }, taskId) {
       commit('toggleTaskCompletion', taskId);
+    },
+    setSearchQuery({ commit }, query) {
+      commit('setSearchQuery', query);
     }
   },
   getters: {
-    allTasks: state => state.tasks,
-    completedTasks: state => state.tasks.filter(task => task.completed),
-    uncompletedTasks: state => state.tasks.filter(task => !task.completed)
+    allTasks: state => {
+      return state.tasks.filter(task =>
+        task.description.toLowerCase().includes(state.searchQuery.toLowerCase())
+      ).sort((a, b) => b.createdAt - a.createdAt);
+    },
+    completedTasks: state => {
+      return state.tasks.filter(task => task.completed && task.description.toLowerCase().includes(state.searchQuery.toLowerCase()))
+        .sort((a, b) => b.createdAt - a.createdAt);
+    },
+    uncompletedTasks: state => {
+      return state.tasks.filter(task => !task.completed && task.description.toLowerCase().includes(state.searchQuery.toLowerCase()))
+        .sort((a, b) => b.createdAt - a.createdAt);
+    }
   }
 });
