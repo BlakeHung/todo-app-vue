@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="search-bar">
     <input v-model="query" @input="updateSearchQuery" placeholder="Search tasks..." />
   </div>
 </template>
@@ -18,3 +18,22 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.search-bar {
+  margin-bottom: 20px;
+}
+
+input {
+  width: calc(100% - 22px);
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+@media (max-width: 600px) {
+  input {
+    width: 100%;
+  }
+}
+</style>
